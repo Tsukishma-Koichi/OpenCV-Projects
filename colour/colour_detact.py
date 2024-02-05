@@ -32,8 +32,8 @@ def img_process(img, lower, upper):
 	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)  # 将BGR图像转化为HSV图像，方便颜色提取
 	opening = cv2.morphologyEx(hsv, cv2.MORPH_OPEN, kernel)  # 用卷积核对图像进行形态学开运算操作，去除噪声
 	mask = cv2.inRange(opening, lower, upper)  # 开运算得到的图像用阈值进行二值化处理（处理后的结果为在阈值内的部分变为白色，不在阈值内的部分为黑色）
-	res = cv2.bitwise_and(img, img, mask=mask)  # 二值化处理后的图像与原图进行位与运算（处理后在阈值内的颜色变为原颜色，不在阈值内的部分仍为黑色）
-	return res  # 该函数的返回值为位与运算之后的图像，此图像只保留了在阈值内的图像，其余部分为黑色
+	res = cv2.bitwise_and(img, img, mask=mask)  # 二值化处理后的图像与原图按位进行与运算（处理后在阈值内的颜色变为原颜色，不在阈值内的部分仍为黑色）
+	return res  # 该函数的返回值为按位进行与运算之后的图像，此图像只保留了在阈值内的图像，其余部分为黑色
 
 
 def cnts_draw(img, res, color):
