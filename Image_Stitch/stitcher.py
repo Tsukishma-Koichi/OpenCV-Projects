@@ -6,6 +6,7 @@ class Stitcher:
 
 	def stitch(self, images, ratio=0.75, reprojThresh=4.0, show_matches=False):
 		imageB, imageA = images[0], images[1]
+
 		kpsA, featuresA = self.detectAndDescribe(imageA)
 		kpsB, featuresB = self.detectAndDescribe(imageB)
 
@@ -21,11 +22,9 @@ class Stitcher:
 		result[0:imageB.shape[0], 0:imageB.shape[1]] = imageB
 		# self.cv_show('result', result)
 
-		# if show_matches:
-			# vis = cv2.drawMatches(imageA, kpsA, imageB, kpsB, matches, None,
-			# 					  matchColor=(0, 255, 0), singlePointColor=None,
-			# 					  matchesMask=status.reshape(-1).tolist(), flags=2)
-
+		if show_matches:
+			vis = self.drawMatches(imageA, kpsA, imageB, kpsB, matches, status)
+			return (result, vis)  # 返回拼接图像和匹配结果图像
 
 		return result
 
@@ -48,7 +47,7 @@ class Stitcher:
 
 		matches = []
 		for m in raw_matches:
-			if len(m) == 2 and m[0].distance < ratio * m[1].distance:
+			if len(m) == 2 and m[0].distance < ratio * m[ 1].distance:
 				matches.append((m[0].trainIdx, m[0].queryIdx))
 
 			if len(matches) > 4:
@@ -58,6 +57,24 @@ class Stitcher:
 				H, status = cv2.findHomography(ptsA, ptsB, cv2.RANSAC, reprojThresh)
 
 		return matches, H, status
+
+	def drawMatches(self, imgA, kpsA, imgB, kpsB, matches, status):
+		"""
+		绘制匹配结果
+		"""
+		(hA, wA) = imgA.shape[:2]
+		(hB, wB) = imgB.shape[:2]
+		vis = np.zeros((max(hA, hB), wA + wB, 3), dtype="uint8")
+		vis[0:hA, 0:wA] = imgA
+		vis[0:hB, wA:] = imgB
+
+		for ((trainIdx, queryIdx), s) in zip(matches, status):
+			if s == 1:
+				ptA = (int(kpsA[queryIdx][0]), int(kpsA[queryIdx][1]))
+				ptB = (int(kpsB[trainIdx][0]) + wA, int(kpsB[trainIdx][1]))
+				cv2.line(vis, ptA, ptB, (0, 255, 0), 1)
+
+		return vis
 
 
 	def cv_show(self, name, img):
