@@ -2,13 +2,13 @@ import cv2
 import numpy as np
 
 
-# 设置三种颜色hsv阈值 以三原色为例
-lower_red = np.array([0, 99, 77])
-upper_red = np.array([4, 255, 255])
-lower_green = np.array([97, 20, 54])
-upper_green = np.array([113, 255, 255])
-lower_blue = np.array([100, 43, 46])
-upper_blue = np.array([124, 255, 255])
+# 设置三种颜色hsv阈值
+lower_red = np.array([0, 43, 46])
+upper_red = np.array([70, 255, 255])
+lower_green = np.array([43, 44, 48])
+upper_green = np.array([90, 255, 255])
+lower_blue = np.array([100, 53, 48])
+upper_blue = np.array([120, 255, 255])
 # 实际操作中根据 colour_hsv.py 确定颜色阈值
 
 # 设置线框颜色

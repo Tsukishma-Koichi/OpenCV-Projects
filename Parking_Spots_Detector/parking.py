@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import cv2
-import os, glob
+import glob, os
 import numpy as np
 
 
@@ -13,12 +13,12 @@ class Parking:
 
 		plt.figure(figsize=(15, 12))
 		for i, image in enumerate(images):
-			plt.subplot(rows, cols, i + 1)
+			plt.subplot(rows, cols, i + 1)  # 设置每个子图的位置
 			cmap = 'gray' if len(image.shape) == 2 else cmap
 			plt.imshow(image, cmap=cmap)
 			plt.xticks([])
 			plt.yticks([])
-		plt.tight_layout(pad=0, h_pad=0, w_pad=0)
+		plt.tight_layout(pad=0, h_pad=0, w_pad=0)  # 调整子图之间的间距，使得布局更加紧凑
 		plt.show()
 
 	def cv_show(self, name, img):
