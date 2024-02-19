@@ -3,8 +3,8 @@ import numpy as np
 
 
 # 设置三种颜色hsv阈值
-lower_red = np.array([0, 43, 46])
-upper_red = np.array([70, 255, 255])
+lower_yellow = np.array([15, 53, 62])
+upper_yellow = np.array([30, 255, 255])
 lower_green = np.array([43, 44, 48])
 upper_green = np.array([90, 255, 255])
 lower_blue = np.array([100, 53, 48])
@@ -12,7 +12,7 @@ upper_blue = np.array([120, 255, 255])
 # 实际操作中根据 colour_hsv.py 确定颜色阈值
 
 # 设置线框颜色
-red = (0, 0, 225)
+yellow = (0, 255, 225)
 green = (0, 255, 0)
 blue = (225, 0, 0)
 
@@ -78,11 +78,11 @@ def color_find(img):
 	opening = cv2.morphologyEx(hsv, cv2.MORPH_OPEN, kernel)  # 以上为图像处理
 	h_list = cv2.calcHist([opening], [0], None, [180], [0, 180])  # 对Open图像的H通道进行直方图统计
 	h_list_max = np.where(h_list == np.max(h_list))  # 找到直方图h_list中列方向最大的点h_list_max
-	if 0 < h_list_max[0] < 10:  # H在0~10为红色
-		print('red')
-	elif 35 < h_list_max[0] < 77:  # H在35~77为绿色
+	if 15 < h_list_max[0] < 30:  # H在15~30为黄色
+		print('yellow')
+	elif 43 < h_list_max[0] < 90:  # H在43~90为绿色
 		print('green')
-	elif 100 < h_list_max[0] < 124:  # H在100~124为蓝色
+	elif 100 < h_list_max[0] < 120:  # H在100~120为蓝色
 		print('blue')
 	else:
 		return
@@ -97,15 +97,15 @@ if __name__ == "__main__":
 			break
 		else:
 			if frame is not None:
-				Red = Detector(frame, lower_red, upper_red, red)
+				Yellow = Detector(frame, lower_yellow, upper_yellow, yellow)
 				Blue = Detector(frame, lower_blue, upper_blue, blue)
 				Green = Detector(frame, lower_green, upper_green, green)
 
-				Red.img_process()
+				Yellow.img_process()
 				Blue.img_process()
 				Green.img_process()
 
-				Red.cnts_draw()
+				Yellow.cnts_draw()
 				Blue.cnts_draw()
 				Green.cnts_draw()
 
