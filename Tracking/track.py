@@ -10,6 +10,9 @@ upper_yellow = np.array([55, 255, 255])  # 50,255,255
 vedio = 'demo2.avi'
 cap = cv2.VideoCapture(vedio)
 
+count_cir = 0
+count_thr = 0
+
 while True:
 	ret, frame = cap.read()
 	if not ret:
@@ -44,6 +47,9 @@ while True:
 	right_line = []
 
 	while True:
+		if LEFT >= img.shape[1]:  # 检查是否超出图像宽度范围
+			break
+
 		if img[staY, LEFT] == 255:
 			staX = LEFT
 			break
@@ -66,16 +72,21 @@ while True:
 		staX = int((left + right) / 2)
 
 		# 环岛识别
-		if staY == endY:
+		if staY == endY and count_cir <= 2:
 			if len(left_line) >= 2 and len(right_line) >= 2:
 				diff_left = left_line[-1] - left_line[-25]  # 检测边线坐标差值
 				diff_right = right_line[-1] - right_line[-25]
 				if diff_left < -40 and diff_right < -8:  # 左边线突变，右边线变化不大则为左环岛
 					print("左环岛")
-				if 8 > diff_left and diff_right > 40:
-					print(diff_left)
-					print(diff_right)
-					print("右环岛")
+					count_cir = count_cir + 1
+
+				# 三叉
+				if count_cir == 1 and count_thr == 0:
+					length_end = abs(left_line[-1] - right_line[-1])
+					length_sta = abs(left_line[0] - right_line[0])
+					diff = abs(length_end - length_sta)
+					if diff > 70:
+						print("三叉")
 
 		if staY == oriY:
 			oriX = staX
