@@ -12,6 +12,7 @@ cap = cv2.VideoCapture(vedio)
 
 count_cir = 0
 count_thr = 0
+count_ten = 0
 
 while True:
 	ret, frame = cap.read()
@@ -86,7 +87,15 @@ while True:
 					length_sta = abs(left_line[0] - right_line[0])
 					diff = abs(length_end - length_sta)
 					if diff > 70:
-						print("三叉")
+						if count_thr == 0:
+							print("三叉")
+		# 十字
+		if staY == endY and count_cir >= 2:
+			delt_left = left_line[-1] - left_line[-10]
+			delt_right = right_line[-1] - right_line[-10]
+			if delt_left < -10 and delt_right > 10:
+				print("十字")
+
 
 		if staY == oriY:
 			oriX = staX
