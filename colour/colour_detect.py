@@ -2,22 +2,16 @@ import cv2
 import numpy as np
 
 
-# 设置三种颜色hsv阈值
-lower_yellow = np.array([15, 53, 62])
-upper_yellow = np.array([30, 255, 255])
-lower_green = np.array([43, 44, 48])
-upper_green = np.array([90, 255, 255])
-lower_blue = np.array([100, 53, 48])
-upper_blue = np.array([120, 255, 255])
+# 设置颜色hsv阈值
+lower_green = np.array([58, 90, 67])
+upper_green = np.array([99, 255, 214])
 # 实际操作中根据 colour_hsv.py 确定颜色阈值
 
 # 设置线框颜色
-yellow = (0, 255, 225)
 green = (0, 255, 0)
-blue = (225, 0, 0)
 
 cv2.namedWindow('video', cv2.WINDOW_AUTOSIZE)  # 设置窗口'video'，大小为自适应模式
-cv2.resizeWindow('video', 640, 480)  # 为窗口设置宽度（640）和高度（480）
+cv2.resizeWindow('video', 64, 48)  # 为窗口设置宽度（640）和高度（480）
 
 
 class Detector:
@@ -48,7 +42,7 @@ class Detector:
 
 	def cnts_draw(self):
 		"""
-		在原图像上绘出指定颜色的轮廓
+		矩形轮廓
 		"""
 		obj = Detector(self.img, self.lower, self.upper, self.color)
 		res = obj.img_process()
@@ -64,6 +58,7 @@ class Detector:
 			(x, y, w, h) = cv2.boundingRect(max_cnt)
 			# 找到这个最大轮廓的最大外接矩形，返回的（x，y）为这个矩形右下角的顶点，w为宽度，h为高度
 			cv2.rectangle(self.img, (x, y), (x + w, y + h), self.color, 3)  # 在原图上绘制这个矩形
+			print(w * h)
 			cv2.imshow('video', self.img)  # 展示原图
 
 
@@ -78,37 +73,27 @@ def color_find(img):
 	opening = cv2.morphologyEx(hsv, cv2.MORPH_OPEN, kernel)  # 以上为图像处理
 	h_list = cv2.calcHist([opening], [0], None, [180], [0, 180])  # 对Open图像的H通道进行直方图统计
 	h_list_max = np.where(h_list == np.max(h_list))  # 找到直方图h_list中列方向最大的点h_list_max
-	if 15 < h_list_max[0] < 30:  # H在15~30为黄色
-		print('yellow')
-	elif 43 < h_list_max[0] < 90:  # H在43~90为绿色
+	if 58 < h_list_max[0] < 99:  # H在58~99为绿色
 		print('green')
-	elif 100 < h_list_max[0] < 120:  # H在100~120为蓝色
-		print('blue')
 	else:
 		return
 
 
 if __name__ == "__main__":
-	cap = cv2.VideoCapture(0)  # 调用摄像
-	while cap.isOpened():
-		flag, frame = cap.read()
+	# cap = cv2.VideoCapture(0)  # 调用摄像
+	# while cap.isOpened():
+	while 1:
+		#flag, frame = cap.read()
+		flag = 1
+		frame = cv2.imread('0.jpg', cv2.IMREAD_COLOR)
 		if not flag:
 			print("无法读取摄像头！")
 			break
 		else:
 			if frame is not None:
-				Yellow = Detector(frame, lower_yellow, upper_yellow, yellow)
-				Blue = Detector(frame, lower_blue, upper_blue, blue)
 				Green = Detector(frame, lower_green, upper_green, green)
-
-				Yellow.img_process()
-				Blue.img_process()
 				Green.img_process()
-
-				Yellow.cnts_draw()
-				Blue.cnts_draw()
 				Green.cnts_draw()
-
 				color_find(frame)
 				key = cv2.waitKey(10)
 				if key == 27:  # ESC退出程序
@@ -117,5 +102,5 @@ if __name__ == "__main__":
 				print("无画面")
 				break
 
-	cap.release()
+	# cap.release()
 	cv2.destroyAllWindows()

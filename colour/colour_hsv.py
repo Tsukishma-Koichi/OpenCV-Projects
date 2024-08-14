@@ -3,7 +3,8 @@
 import cv2
 import numpy as np
 
-capture = cv2.VideoCapture(0)
+# capture = cv2.VideoCapture(0)
+capture = cv2.imread('0.jpg', cv2.IMREAD_COLOR)
 
 hsv_low = np.array([0, 0, 0])
 hsv_high = np.array([0, 0, 0])
@@ -50,8 +51,25 @@ cv2.createTrackbar('S high', 'image', 0, 255, s_high)
 cv2.createTrackbar('V low', 'image', 0, 255, v_low)
 cv2.createTrackbar('V high', 'image', 0, 255, v_high)
 
+'''
 while capture.isOpened():
     ret, frame = capture.read()
+
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # BGR转HSV
+    dst = cv2.inRange(hsv, hsv_low, hsv_high)  # 通过HSV的高低阈值，提取图像部分区域up_width = 600
+
+    down_width = 640
+    down_height = 480
+    down_points = (down_width, down_height)
+    dst = cv2.resize(dst, down_points, interpolation=cv2.INTER_LINEAR)
+
+    cv2.imshow('dst', dst)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+'''
+
+while 1:
+    frame = capture
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # BGR转HSV
     dst = cv2.inRange(hsv, hsv_low, hsv_high)  # 通过HSV的高低阈值，提取图像部分区域up_width = 600
